@@ -21,7 +21,7 @@ func NewDecoder(numChannels int) *Decoder {
 	}
 }
 
-func (decoder *Decoder) Decode(in []byte, out *[]int) {
+func (decoder *Decoder) Decode(in []byte, out *[]byte) {
 	reader := bytes.NewReader(in)
 
 	for {

@@ -1,6 +1,6 @@
 package adpcm
 
-func Encode(in []int, out *[]byte) {
+func Encode(in []byte, out *[]byte) {
 	leftStatus := NewStatus()
 	rightStatus := NewStatus()
 

@@ -22,7 +22,7 @@ var stepTable = []int{
 }
 
 type Status struct {
-	sample int
+	sample byte
 	index  int
 }
 
@@ -33,7 +33,7 @@ func NewStatus() *Status {
 	}
 }
 
-func (status *Status) Decode(nibble byte) int {
+func (status *Status) Decode(nibble byte) byte {
 	step := stepTable[status.index]
 
 	diff := 0
@@ -52,13 +52,13 @@ func (status *Status) Decode(nibble byte) int {
 		diff = -diff
 	}
 
-	newSample := status.sample + diff
+	newSample := int(status.sample) + diff
 	if newSample > math.MaxInt16 {
 		newSample = math.MaxInt16
 	} else if newSample < math.MinInt16 {
 		newSample = math.MinInt16
 	}
-	status.sample = newSample
+	status.sample = byte(newSample)
 
 	index := status.index + indexTable[nibble]
 	if index < 0 {
@@ -68,10 +68,10 @@ func (status *Status) Decode(nibble byte) int {
 	}
 	status.index = index
 
-	return newSample
+	return byte(newSample)
 }
 
-func (status *Status) Encode(sample int) byte {
+func (status *Status) Encode(sample byte) byte {
 	diff := sample - status.sample
 	var nibble byte = 0
 
@@ -83,16 +83,14 @@ func (status *Status) Encode(sample int) byte {
 	var mask byte = 4
 	tempStep := stepTable[status.index]
 	for i := 0; i < 3; i++ {
-		if diff > tempStep {
+		if int(diff) > tempStep {
 			nibble |= mask
-			diff -= tempStep
+			diff -= byte(tempStep)
 		}
 		mask >>= 1
 		tempStep >>= 1
 	}
 
-	// XXX
-	// Update the status
 	status.Decode(nibble)
 
 	return nibble
